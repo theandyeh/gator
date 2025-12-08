@@ -21,13 +21,13 @@ func Read() (Config, error) {
 
 	file, err := os.ReadFile(config_file_path)
 	if err != nil {
-		return Config{}, fmt.Errorf("Error reading config file: %w", err)
+		return Config{}, fmt.Errorf("config error reading config file: %w", err)
 	}
 
 	var config Config
 	err = json.Unmarshal(file, &config)
 	if err != nil {
-		return Config{}, fmt.Errorf("Error parsing config file: %w", err)
+		return Config{}, fmt.Errorf("config error parsing config file: %w", err)
 	}
 
 	return config, nil
@@ -35,7 +35,7 @@ func Read() (Config, error) {
 
 func (c *Config) SetUser(username string) error {
 	if len(c.Db_url) < 1 {
-		return fmt.Errorf("DB URL is not set in config, cannot set user")
+		return fmt.Errorf("config error db url is not set in config, cannot set user")
 	}
 
 	c.Current_db_user = username
@@ -51,16 +51,16 @@ func (c *Config) SetUser(username string) error {
 func (c *Config) WriteConfig() error {
 	config_file_path, err := GetConfigPath()
 	if err != nil {
-		return fmt.Errorf("Unable to get config file path to Write: %w", err)
+		return fmt.Errorf("config error nable to get config file path to write: %w", err)
 	}
 
 	data, err := json.Marshal(c)
 	if err != nil {
-		return fmt.Errorf("Unable to marshal JSON to Write: %w", err)
+		return fmt.Errorf("config error unable to marshal json to write: %w", err)
 	}
 
 	if err := os.WriteFile(config_file_path, data, 0644); err != nil {
-		return fmt.Errorf("Unable to write config file: %w", err)
+		return fmt.Errorf("config error unable to write config file: %w", err)
 	}
 
 	return nil
@@ -69,7 +69,7 @@ func (c *Config) WriteConfig() error {
 func GetConfigPath() (string, error) {
 	homedir, err := os.UserHomeDir()
 	if err != nil {
-		return "", fmt.Errorf("Error reading Home Directory: %w", err)
+		return "", fmt.Errorf("config error reading home dir: %w", err)
 	}
 
 	config_file_path := homedir + string(os.PathSeparator) + Config_file_name
