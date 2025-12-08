@@ -2,29 +2,41 @@ package main
 
 import (
 	"fmt"
+	"os"
 
+	"github.com/theandyeh/gator/internal/app"
+	"github.com/theandyeh/gator/internal/cmd"
 	"github.com/theandyeh/gator/internal/config"
 )
 
 func main() {
-
-	cfg, err := config.Read()
-	if err != nil {
-		fmt.Println("Error reading config:", err)
+	if len(os.Args) < 2 {
+		fmt.Println("No command provided")
 		return
 	}
 
-	cfg.SetUser("andy")
+	state := &app.State{}
+	var err error
 
-	cfg, err = config.Read()
+	state.Cfg, err = config.Read()
 	if err != nil {
-		fmt.Println("Error reading config:", err)
+		fmt.Println(err)
 		return
 	}
 
-	fmt.Println("Current DB User:", cfg.Current_db_user)
-	fmt.Println("DB URL:", cfg.Db_url)
+	cmd_list := cmd.CreateCommandsList()
+	cmd_list.Register("login", cmd.HandlerLogin)
 
-	return
+	c_name := os.Args[1]
+	c_args := os.Args[2:]
+	usr_command := cmd.Command{
+		Name: c_name,
+		Args: c_args,
+	}
 
+	err = cmd_list.Run(state, usr_command)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 }

@@ -13,24 +13,24 @@ type Config struct {
 	Current_db_user string `json:"current_user_name"`
 }
 
-func Read() (Config, error) {
+func Read() (*Config, error) {
 	config_file_path, err := GetConfigPath()
 	if err != nil {
-		return Config{}, err
+		return &Config{}, err
 	}
 
 	file, err := os.ReadFile(config_file_path)
 	if err != nil {
-		return Config{}, fmt.Errorf("config error reading config file: %w", err)
+		return &Config{}, fmt.Errorf("config error reading config file: %w", err)
 	}
 
 	var config Config
 	err = json.Unmarshal(file, &config)
 	if err != nil {
-		return Config{}, fmt.Errorf("config error parsing config file: %w", err)
+		return &Config{}, fmt.Errorf("config error parsing config file: %w", err)
 	}
 
-	return config, nil
+	return &config, nil
 }
 
 func (c *Config) SetUser(username string) error {
