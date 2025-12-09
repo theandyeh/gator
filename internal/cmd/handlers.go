@@ -9,6 +9,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/theandyeh/gator/internal/app"
 	"github.com/theandyeh/gator/internal/database"
+	"github.com/theandyeh/gator/internal/rss"
 )
 
 func HandlerLogin(s *app.State, c Command) error {
@@ -86,6 +87,28 @@ func HandlerUsers(s *app.State, c Command) error {
 			continue
 		}
 		fmt.Printf("- %s\n", user.Name)
+	}
+
+	return nil
+}
+
+func HandlerAgg(s *app.State, c Command) error {
+	feed, err := rss.FetchFeed(context.Background(), "https://www.wagslane.dev/index.xml")
+	if err != nil {
+		return fmt.Errorf("agg handler error: %w", err)
+	}
+
+	fmt.Printf("Feed Title: %s\n", feed.Channel.Title)
+	fmt.Printf("Feed Link: %s\n", feed.Channel.Link)
+	fmt.Printf("Feed Description: %s\n", feed.Channel.Description)
+
+	fmt.Println("Feed Items:")
+	for _, item := range feed.Channel.Item {
+		fmt.Printf("- Title: %s\n", item.Title)
+		fmt.Printf("  Link: %s\n", item.Link)
+		fmt.Printf("  Description: %s\n", item.Description)
+		fmt.Printf("  Published Date: %s\n", item.PubDate)
+		fmt.Println("--------------------------")
 	}
 
 	return nil
