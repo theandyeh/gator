@@ -38,6 +38,10 @@ func main() {
 	cmd_list.Register("reset", cmd.HandlerReset)
 	cmd_list.Register("users", cmd.HandlerUsers)
 	cmd_list.Register("agg", cmd.HandlerAgg)
+	cmd_list.Register("addfeed", cmd.MiddlewareLoggedIn(cmd.HandlerAddFeed))
+	cmd_list.Register("feeds", cmd.HandlerFeeds)
+	cmd_list.Register("follow", cmd.MiddlewareLoggedIn(cmd.HandlerFollow))
+	cmd_list.Register("following", cmd.MiddlewareLoggedIn(cmd.HandlerFollowing))
 
 	c_name := os.Args[1]
 	c_args := os.Args[2:]
